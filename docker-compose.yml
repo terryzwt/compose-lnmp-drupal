@@ -12,7 +12,7 @@ services:
         depends_on:
           - php7-fpm
     php7-fpm:
-        image: "zterry95/docker-php7-memcached"
+        image: "zterry95/docker-php7"
         volumes:
           - ./app/web:/app/web
         depends_on:
