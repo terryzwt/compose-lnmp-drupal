@@ -12,9 +12,11 @@ services:
         depends_on:
           - php7-fpm
     php7-fpm:
-        image: "zterry95/docker-php7"
+        image: "zterry95/docker-php7:latest"
         volumes:
           - ./app/web:/app/web
+          - ./etc/php:/usr/local/etc/php
+          - ./etc/php-fpm:/usr/local/etc
         depends_on:
           - mysql
           - memcached
@@ -26,8 +28,8 @@ services:
         ports:
           - "3306:3306"
         volumes:
-            - ./mysql-data:/var/lib/mysql
-            - ./etc/mysql:/etc/mysql/conf.d
+          - ./mysql-data:/var/lib/mysql
+          - ./etc/mysql:/etc/mysql/conf.d
         environment:
             TZ: 'Asia/Shanghai'
             MYSQL_ROOT_PASSWORD: Abcd@1234~
