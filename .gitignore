@@ -1,2 +1,5 @@
 app
 mysql-data
+memcached/etc
+redis/etc
+oci8-memcached/etc
