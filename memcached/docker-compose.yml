@@ -33,6 +33,8 @@ services:
       environment:
         TZ: 'Asia/Shanghai'
         MYSQL_ROOT_PASSWORD: Abcd@1234~
+      #mem_limit: 2500M 
+      #cpuset: 1,3
     memcached:
       image: memcached
       ports:
