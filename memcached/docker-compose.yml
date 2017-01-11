@@ -38,6 +38,4 @@ services:
     #cpuset: 1,3
   memcached:
     image: memcached
-    ports:
-      - "11211:11211"
     mem_limit: 256M 
