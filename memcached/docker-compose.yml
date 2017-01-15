@@ -38,4 +38,5 @@ services:
     #cpuset: 1,3
   memcached:
     image: memcached
-    mem_limit: 256M 
+    mem_limit: 128M
+    command: memcached -m 128M
