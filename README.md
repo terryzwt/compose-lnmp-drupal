@@ -8,6 +8,7 @@
 * 安装好docker和docker-compose
 * 安装[Dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html)
 或者在/etc/host里面，将.dev的域名，都强制指向到127.0.0.1
+
 ###简介
 |目录|简介
 | - | - |
@@ -83,3 +84,5 @@ ln -s /var/lib/mysql mysql-data
 |___ mysql-data -> /Users/terry/docker/storage/mysql-data
 
 </pre>
+
+
