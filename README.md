@@ -1,6 +1,8 @@
 本项目用来基于docker技术快速建立Drupal的开发环境。
 其中php-fpm的镜像，来自于自定义镜像：
-> [zterry95/docker-php7](https://hub.docker.com/r/zterry95/docker-php7/)
+
+* [Docker hub => docker-php7](https://hub.docker.com/r/zterry95/docker-php7/)
+* [Github Dockerfile => docker-php7](https://github.com/terryzwt/docker-php7)
 
 里面已经包含了执行Drupal所需的基本php扩展，比如gd,pdo_mysql等。
 
@@ -9,9 +11,9 @@
 * 安装[Dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html)
 或者在/etc/host里面，将.dev的域名，都强制指向到127.0.0.1
 
-###简介
-|目录|简介
-| - | - |
+###目录简介
+|目录|简介|
+| ----- | ----- |
 |memcached|包含php memcached的环境|
 |redis|包含php reids的环境|
 |oci8|包含php oci8+memcached的环境|
@@ -21,18 +23,21 @@
 
 ###安装
 * 如果需要包含memcached的环境，执行如下命令：
+
 ```bash
 git clone git@github.com:terryzwt/compose-lnmp-drupal.git
 cd compose-lnmp-drupal/memcached
 docker-compose up -d
 ```
 * 如果需要包含redis的环境，执行如下命令：
+
 ```bash
 git clone git@github.com:terryzwt/compose-lnmp-drupal.git
 cd compose-lnmp-drupal/redis
 docker-compose up -d
 ```
 * 如果需要包含oci8的环境，执行如下命令：
+
 ```bash
 git clone git@github.com:terryzwt/compose-lnmp-drupal.git
 cd compose-lnmp-drupal/oci8
@@ -45,6 +50,7 @@ docker-compose up -d
 
 ###数据库文件目录说明
 * 数据库文件目录是mysql-data。你可以将已经存在的mysql数据库文件，软连接过来，命令如下
+
 ```bash
 rm -r mysql-data
 ln -s /var/lib/mysql mysql-data
