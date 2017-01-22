@@ -1,0 +1,38 @@
+server {
+	listen 80;
+	server_name js-quanxin.com;
+	server_name www.js-quanxin.com;
+	root /app/web/quanxin;
+	index index.php index.html;
+	#access_log /usr/local/var/log/nginx/access.log;
+	#error_log /usr/local/var/log/nginx/error.log;
+	
+	if ($host != 'www.js-quanxin.com' ) {
+		rewrite ^/(.*)$ http://www.js-quanxin.com/$1 permanent;
+	}
+	location / {
+		if (!-e $request_filename) {
+			rewrite ^/(.*)$ /index.php?q=$1 last;
+		}
+	}
+	location /ip {
+		add_header Content-Type html/text;
+		return 200 $request_uri;
+	}
+
+	location ~ \.php$ {
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
+		#fastcgi_pass 127.0.0.1:9000;
+		fastcgi_pass php-fpm:9000;
+		fastcgi_index index.php;
+		fastcgi_read_timeout 60;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		include fastcgi_params;
+	}
+}
+server { 
+	server_name dplor.com; 
+	if ($host != 'www.dplor.com' ) {
+		rewrite ^/(.*)$ http://www.dplor.com/$1 permanent;
+	}
+}

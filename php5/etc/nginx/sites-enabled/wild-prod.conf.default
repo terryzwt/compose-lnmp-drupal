@@ -1,0 +1,195 @@
+fastcgi_cache_path /tmp/nginx-microcache-lbs levels=1:2 keys_zone=microcache-lbs:5M max_size=1G inactive=2h loader_threshold=2592000000 loader_sleep=1 loader_files=100000;
+fastcgi_cache_key "$scheme$request_method$host$request_uri$args";
+add_header X-Cache $upstream_cache_status;
+
+upstream php_fpm {
+      server php-fpm:9000 weight=1 max_fails=3 fail_timeout=5; ##CDMP1
+}
+
+# Caching HEAD and GET
+map $request_method $no_cache {
+    default 1;
+    HEAD 0;
+    GET 0;
+}
+#map $request_method $no_cache {
+#    default 0;
+#    POST 1; # POST requests aren't cached usually
+#}
+
+## Let Ajax calls go through.
+map $uri $no_cache_ajax {
+    default 0;
+    /system/ajax 1;
+}
+
+## Testing for the session cookie being present. If there is then no
+## caching is to be done. Note that this is for someone using either
+## Drupal 7 pressflow or stock Drupal 6 core with no_anon
+## (http://drupal.org/project/no_anon).
+map $http_cookie $no_cache {
+    default 0;
+    ~SESS 1; # PHP session cookie
+}
+
+### Combine both results to get the cache bypassing mapping.
+#map $no_cache_ajax$no_cache_cookie $no_cache {
+#    default 1;
+#    00 0;
+#}
+
+## Set a cache_uid variable for authenticated users.
+map $http_cookie $cache_uid {
+    default nil; # hommage to Lisp :)
+    ~SESS[[:alnum:]]+=(?<session_id>[[:graph:]]+) $session_id;
+}
+
+server {
+        listen       80;
+        server_name ~^(?<sub>.+)\.dev$;
+        #charset koi8-r;
+
+        root /app/web/$sub;
+        index index.php index.html;
+
+        access_log /var/log/nginx/$host.access.log;
+        error_log  /var/log/nginx/error.log;
+
+        #Setting cache behavior
+        #  Cache everything by default
+        set $no_cache 0;
+        #  Don't cache POST requests
+        if ($request_method = POST){
+            set $no_cache 1;
+        }
+        #  Don't cache if the URL contains a query string
+        if ($query_string != ""){
+            set $no_cache 1;
+        }
+        #  Don't cache the following URLs
+        if ($request_uri ~* "/(administrator/|admin/|login.php)"){
+            set $no_cache 1;
+        }
+        #  Don't cache if there is a cookie called PHPSESSID
+        if ($http_cookie = "PHPSESSID"){
+            set $no_cache 1;
+        }
+
+        #  Block download agents ##
+        if ($http_user_agent ~* LWP::Simple|BBBike|wget) {
+            return 403;
+        }
+
+        #Block wordpress scan attack
+        location ~ ^/(wp-admin|wp-login\.php) {
+            deny all;
+        }
+
+        # Very rarely should these ever be accessed outside of your lan
+        location ~* \.(txt|log)$ {
+            deny all;
+        }
+
+        location / {
+            etag       off;
+            try_files $uri @rewrite;
+        }
+
+        location @rewrite {
+            etag       off;
+            # Some modules enforce no slash (/) at the end of the URL
+            # Else this rewrite block wouldn't be needed (GlobalRedirect)
+            rewrite ^/(.*)$ /index.php?q=$1;
+        }
+
+        location ~ \.php$ {
+                include fastcgi_params;
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass php_fpm;
+                fastcgi_index index.php;
+                fastcgi_read_timeout 120;
+                fastcgi_send_timeout 120;
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                fastcgi_connect_timeout 3s;
+                fastcgi_buffer_size 128k;
+                fastcgi_buffers 256 16k;
+                fastcgi_intercept_errors on;
+                ## Hide the X-Drupal-Cache header provided by Pressflow.
+                fastcgi_hide_header 'X-Drupal-Cache';
+                ## Hide the Drupal 7 header X-Generator.
+                fastcgi_hide_header 'X-Generator';
+
+                # Set Cache
+                fastcgi_cache microcache-lbs;
+                fastcgi_cache_valid 200 301 1s;
+                fastcgi_cache_bypass $no_cache;
+                fastcgi_no_cache $no_cache;
+
+                # Set cache key to include identifying components
+                fastcgi_cache_valid 302     1m;
+                fastcgi_cache_valid 404     1s;
+                fastcgi_cache_min_uses 1;
+                fastcgi_cache_use_stale error timeout invalid_header updating http_500;
+                fastcgi_ignore_headers Cache-Control Expires;
+                fastcgi_pass_header Set-Cookie;
+                fastcgi_pass_header Cookie;
+
+
+                add_header X-Micro-Cache $upstream_cache_status;
+                # Enabling Access-Control
+                add_header 'Access-Control-Allow-Origin' '*';
+                add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+                add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
+                ## To avoid any interaction with the cache control headers we expire
+                ## everything on this location immediately.
+                #expires epoch;
+                etag       off;
+
+                ## Cache locking mechanism for protecting the backend of too many
+                ## simultaneous requests.
+                fastcgi_cache_lock on;
+        }
+
+        #  Catch image styles for D7.
+        location ~ ^/sites/.*/files/ {
+            log_not_found off;
+            expires 1y;
+            add_header Pragma public;
+            add_header Cache-Control "public, max-age=2592000";
+            add_header Access-Control-Allow-Origin *;
+            add_header locationheader 1;
+            add_header X-Micro-Cache $upstream_cache_status;
+            # For Cloudflare
+            add_header 'Access-Control-Allow-Credentials' 'true';
+            add_header 'Access-Control-Allow-Headers' 'Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken';
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+            try_files $uri @rewrite;
+        }  
+        location ~* \.(?:js|css|png|jpg|jpeg|gif|ico|svg)$ {
+        #    add_header Content-Type "binary/octet-stream";
+            log_not_found off;
+            expires 1y;
+            add_header Pragma public;
+            add_header Cache-Control "public, max-age=2592000";
+            add_header Access-Control-Allow-Origin *;
+            add_header locationheader 1;
+            add_header X-Micro-Cache $upstream_cache_status;
+            # For Cloudflare
+            add_header 'Access-Control-Allow-Credentials' 'true';
+            add_header 'Access-Control-Allow-Headers' 'Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken';
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+            try_files $uri @rewrite;
+        }
+
+        location ~* \.(eot|ttf|woff) {
+            expires 1y;
+            add_header Cache-Control "public, max-age=2592000";
+        #    add_header X-Micro-Cache $upstream_cache_status always;
+            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Credentials' 'true';
+            add_header 'Access-Control-Allow-Headers' 'Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken';
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+            try_files $uri @rewrite;
+        }
+        include extra/escape.conf;
+}
