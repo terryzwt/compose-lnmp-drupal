@@ -20,7 +20,7 @@ server {
 		return 200 $request_uri;
 	}
 
-	location ~ \.php$ {
+	location ~ '\.php$|^/update.php' {
 		fastcgi_split_path_info ^(.+\.php)(/.+)$;
 		#fastcgi_pass 127.0.0.1:9000;
 		fastcgi_pass php-fpm:9000;
