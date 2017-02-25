@@ -34,5 +34,6 @@ services:
     environment:
       TZ: 'Asia/Shanghai'
       MYSQL_ROOT_PASSWORD: password
+      # MYSQL_ROOT_HOST: "%"
   redis:
     image: redis
