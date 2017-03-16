@@ -12,6 +12,7 @@
 或者在/etc/host里面，将.dev的域名，都强制指向到127.0.0.1
 
 ###目录简介
+
 |目录|简介|
 | ----- | ----- |
 |memcached|包含php memcached的环境|
@@ -21,16 +22,9 @@
 |etc|nginx, php, mysql自定义文件的放置目录|
 |mysql-data|mysql数据存放目录，对应/var/lib/mysql/data|
 
-		
 ###安装
-首要步骤：拷贝 /compose-lnmp-drupal/etc 到对应的memcache或redis或memcached
-	可选：
-	开启mysql远程登录：
-		去掉
-		／oci-memcached/redis/memcached/docker-compose.yml下  # MYSQL_ROOT_HOST: "%"注释
-		／etc／my.cnf # bind-address=0.0.0.0 注释
+* 首要步骤：拷贝 /compose-lnmp-drupal/etc 到对应的memcache或redis或memcached
 * 如果需要包含memcached的环境，执行如下命令：
-
 ```bash
 git clone git@github.com:terryzwt/compose-lnmp-drupal.git
 cd compose-lnmp-drupal/memcached
