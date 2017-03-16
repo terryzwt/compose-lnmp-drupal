@@ -6,12 +6,12 @@
 
 里面已经包含了执行Drupal所需的基本php扩展，比如gd,pdo_mysql等。
 
-###前置条件
+### 前置条件
 * 安装好docker和docker-compose
 * 安装[Dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html)
 或者在/etc/host里面，将.dev的域名，都强制指向到127.0.0.1
 
-###目录简介
+### 目录简介
 
 |目录|简介|
 | ----- | ----- |
@@ -22,7 +22,7 @@
 |etc|nginx, php, mysql自定义文件的放置目录|
 |mysql-data|mysql数据存放目录，对应/var/lib/mysql/data|
 
-###安装
+### 安装
 * 首要步骤：拷贝 /compose-lnmp-drupal/etc 到对应的memcache或redis或memcached
 * 如果需要包含memcached的环境，执行如下命令：
 ```bash
@@ -44,12 +44,13 @@ git clone git@github.com:terryzwt/compose-lnmp-drupal.git
 cd compose-lnmp-drupal/oci8
 docker-compose up -d
 ```
-###代码目录说明
+
+### 代码目录说明
 * 代码目录都存放在[memcached|redis|oci8]/app/web，如果该文件夹不存在，则手工创建。
 * 例如，需要访问的地址是example.dev,则[memcached|redis|oci8]/app/web/example是该drupal网站的根目录。
 * 如果有app/web/test这个目录，则可以通过test.dev可以访问。
 
-###数据库文件目录说明
+### 数据库文件目录说明
 * 数据库文件目录是mysql-data。你可以将已经存在的mysql数据库文件，软连接过来，命令如下
 
 ```bash
@@ -58,7 +59,7 @@ ln -s /var/lib/mysql mysql-data
 ```
 * 如果不介意，则可以直接使用该文件夹存储mysql的数据库文件。
 
-###参考
+### 参考
 最终的目录结构如下(假设当前位于[memcached|redis|oci8]目录之一）
 <pre>
 ├── README.md
@@ -91,5 +92,3 @@ ln -s /var/lib/mysql mysql-data
 |___ mysql-data -> /Users/terry/docker/storage/mysql-data
 
 </pre>
-
-
