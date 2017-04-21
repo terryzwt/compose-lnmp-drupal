@@ -33,6 +33,7 @@ services:
       - ./etc/mysql/my.cnf:/etc/my.cnf
     environment:
       TZ: 'Asia/Shanghai'
+      DB_HOST: mysql
       MYSQL_ROOT_PASSWORD: password
   memcached:
     image: memcached
