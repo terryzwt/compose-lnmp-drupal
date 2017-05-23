@@ -12,10 +12,10 @@ services:
     depends_on:
       - php7-fpm
   php7-fpm:
-    image: "zterry95/docker-php7:latest"
+    image: "zterry95/docker-php7:7.1-oci8"
     volumes:
       - ./app/web:/app/web
-      - ./etc/php:/usr/local/etc/php
+      - ./etc/php:/usr/local/etc/phsp
       - ./etc/php-fpm:/usr/local/etc
     depends_on:
       - mysql
@@ -24,17 +24,16 @@ services:
       - mysql:mysql
       - memcached:memcached
   mysql:
-    image: mysql/mysql-server:5.7.17
+    image: wodby/mariadb:10.1-2.1.0
     ports:
-      - "3306:3306"
+      - "3308:3306"
     volumes:
       - ./mysql-data:/var/lib/mysql
-      #- ./etc/mysql:/etc/mysql/conf.d
-      - ./etc/mysql/my.cnf:/etc/my.cnf
+      - ./etc/mysql/my.cnf:/etc/mysql/my.cnf
     environment:
       TZ: 'Asia/Shanghai'
       MYSQL_ROOT_PASSWORD: password
+      # MYSQL_ROOT_HOST: "%"
   memcached:
     image: memcached
-    mem_limit: 512M 
-    command: memcached -m 512M
+    mem_limit: 256M
