@@ -15,8 +15,7 @@ services:
     image: "helloxiaoxin/php-drupal:7.1-oci8-xdebug"
     volumes:
       - ./app/web:/app/web
-      - ./etc/php:/usr/local/etc/php
-      - ./etc/php-fpm:/usr/local/etc
+      - ./etc/php:/usr/local/etc
     depends_on:
       - mariadb
       - memcached
