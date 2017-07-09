@@ -20,9 +20,11 @@ services:
     depends_on:
       - mariadb
       - memcached
+      - redis
     links:
       - mariadb:mysql
       - memcached:memcached
+      - redis:redis
   mariadb:
     image: mariadb
     ports:
@@ -40,7 +42,6 @@ services:
     mem_limit: 256M
   redis:
     image: redis
-    container_name: "redis"
   dnsmasq:
     image: "andyshinn/dnsmasq:latest"
     ports:
