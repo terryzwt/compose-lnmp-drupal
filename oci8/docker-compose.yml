@@ -41,3 +41,13 @@ services:
   redis:
     image: redis
     container_name: "redis"
+  dnsmasq:
+    image: "andyshinn/dnsmasq:latest"
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./etc/dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf
+      - ./etc/dnsmasq/dnsmasq.d:/etc/dnsmasq.d
