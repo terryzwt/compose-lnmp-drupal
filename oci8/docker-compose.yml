@@ -18,10 +18,10 @@ services:
       - ./etc/php:/usr/local/etc/php
       - ./etc/php-fpm:/usr/local/etc
     depends_on:
-      - mysql
+      - mariadb
       - memcached
     links:
-      - mysql:mysql
+      - mariadb:mysql
       - memcached:memcached
   mariadb:
     image: mariadb
