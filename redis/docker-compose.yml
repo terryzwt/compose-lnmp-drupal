@@ -46,4 +46,3 @@ services:
       - NET_ADMIN
     volumes:
       - ./etc/dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf
-      - ./etc/dnsmasq/dnsmasq.d:/etc/dnsmasq.d
