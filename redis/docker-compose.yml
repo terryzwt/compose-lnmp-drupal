@@ -34,6 +34,16 @@ services:
     environment:
       TZ: 'Asia/Shanghai'
       MYSQL_ROOT_PASSWORD: password
-      # MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_HOST: "%"
   redis:
     image: redis
+  dnsmasq:
+    image: "andyshinn/dnsmasq:latest"
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./etc/dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf
+      - ./etc/dnsmasq/dnsmasq.d:/etc/dnsmasq.d

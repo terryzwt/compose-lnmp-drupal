@@ -28,7 +28,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./mysql-data:/var/lib/mysql
+      - ./mariadb-data:/var/lib/mysql
       - ./etc/mysql/conf.d:/etc/mysql/conf.d
       - ./etc/mysql/my.cnf:/etc/mysql/my.cnf
     environment:
@@ -41,3 +41,13 @@ services:
     image: memcached
     mem_limit: 128M
     command: memcached -m 128M
+  dnsmasq:
+    image: "andyshinn/dnsmasq:latest"
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./etc/dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf
+      - ./etc/dnsmasq/dnsmasq.d:/etc/dnsmasq.d

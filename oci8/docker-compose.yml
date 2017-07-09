@@ -34,7 +34,7 @@ services:
     environment:
       TZ: 'Asia/Shanghai'
       MYSQL_ROOT_PASSWORD: password
-      # MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_HOST: "%"
   memcached:
     image: memcached
     mem_limit: 256M
