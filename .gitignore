@@ -1,5 +1,6 @@
 app
-mysql-data
+mariadb-data
 memcached/etc
 redis/etc
-oci8-memcached/etc
+oci8/etc
+base/etc
