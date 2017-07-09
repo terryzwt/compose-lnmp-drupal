@@ -13,6 +13,11 @@ services:
       - php7-fpm
   php7-fpm:
     image: "helloxiaoxin/php-drupal:7.1-oci8-xdebug"
+    expose:
+      - "9000"
+    environment:
+      PHP_XDEBUG_ENABLED: 1
+      XDEBUG_CONFIG: remote_host=10.254.254.254
     volumes:
       - ./app/web:/app/web
       - ./etc/php:/usr/local/etc
