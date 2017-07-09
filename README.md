@@ -1,6 +1,6 @@
 * *master* 版本用于生产环境  
-* *dev*版本用于开发环境（安装了xdebug扩展，dnsmasq容器)  只适用于linux与mac  
-* *windows-dev*版本用于windows的开发环境
+* *dev* 版本用于开发环境（安装了xdebug扩展，dnsmasq容器)  只适用于linux与mac  
+* *windows-dev* 版本用于windows的开发环境
 
 本项目用来基于docker技术快速建立Drupal的开发环境。
 其中php-fpm的镜像，来自于自定义镜像：
@@ -55,7 +55,7 @@ docker-compose up -d
 * 例如，需要访问的地址是example.dev,则[memcached|redis|oci8]/app/web/example是该drupal网站的根目录。
 * 如果有app/web/test这个目录，则可以通过test.dev可以访问。
 * 假如你的drupal网站是composer方式创建的，网站执行目录在web文件夹下，则访问test.devc
-* 提醒：*.dev与*.devc都在etc/dnsmasq/dnsmasq.conf下做了相应的配置，当然你也可以自定义,下面是代码
+* 提醒：*.dev与 *.devc都在etc/dnsmasq/dnsmasq.conf下做了相应的配置，当然你也可以自定义,下面是代码
 
 ```bash
 #address=/double-click.net/127.0.0.1
