@@ -2,7 +2,7 @@ server {
 	listen 80;
 	server_name js-quanxin.com;
 	server_name www.js-quanxin.com;
-	root /app/web/quanxin;
+	root /var/www/quanxin;
 	index index.php index.html;
 	#access_log /usr/local/var/log/nginx/access.log;
 	#error_log /usr/local/var/log/nginx/error.log;
