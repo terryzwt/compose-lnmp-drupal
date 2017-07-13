@@ -1,6 +1,10 @@
 app
 mariadb-data
-memcached/etc
+memcache/etc
 redis/etc
 oci8/etc
 base/etc
+memcache-dev/etc
+redis-dev/etc
+oci8-dev/etc
+base-dev/etc

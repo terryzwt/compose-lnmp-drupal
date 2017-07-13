@@ -6,13 +6,13 @@ services:
       - "80:80"
     volumes:
       - ./etc/nginx:/etc/nginx
-      - ./app/web:/app/web
+      - ./app/web:/var/www
     links:
       - php7-fpm:php-fpm
     depends_on:
       - php7-fpm
   php7-fpm:
-    image: "zterry/php7:oci8"
+    image: "zterry/php7:oci8-dev"
     expose:
       - "9000"
     environment:
@@ -46,12 +46,3 @@ services:
     mem_limit: 256M
   redis:
     image: redis
-  dnsmasq:
-    image: "andyshinn/dnsmasq:latest"
-    ports:
-      - "53:53/tcp"
-      - "53:53/udp"
-    cap_add:
-      - NET_ADMIN
-    volumes:
-      - ./etc/dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf

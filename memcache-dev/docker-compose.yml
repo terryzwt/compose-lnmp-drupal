@@ -6,15 +6,20 @@ services:
       - "80:80"
     volumes:
       - ./etc/nginx:/etc/nginx
-      - ./app/web:/app/web
+      - ./app/web:/var/www
     links:
       - php7-fpm:php-fpm
     depends_on:
       - php7-fpm
   php7-fpm:
-    image: "zterry95/docker-php7:7.1-memcached"
+    image: "zterry/php7:memcache-dev"
+    expose:
+      - "9000"
+    environment:
+      PHP_XDEBUG_ENABLED: 1
+      XDEBUG_CONFIG: remote_host=10.254.254.254
     volumes:
-      - ./app/web:/app/web
+      - ./app/web:/var/www
       - ./etc/php:/usr/local/etc
     depends_on:
       - mariadb
@@ -34,18 +39,6 @@ services:
       TZ: 'Asia/Shanghai'
       MYSQL_ROOT_PASSWORD: password
       MYSQL_ROOT_HOST: "%"
-    #mem_limit: 2500M
-    #cpuset: 1,3
   memcached:
     image: memcached
-    mem_limit: 128M
-    command: memcached -m 128M
-  dnsmasq:
-    image: "andyshinn/dnsmasq:latest"
-    ports:
-      - "53:53/tcp"
-      - "53:53/udp"
-    cap_add:
-      - NET_ADMIN
-    volumes:
-      - ./etc/dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf
+    mem_limit: 256M
