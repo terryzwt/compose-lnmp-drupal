@@ -34,7 +34,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./mariadb-data:/var/lib/mysql
+      - ./mariadb-data:/var/lib
       - ./etc/mariadb/conf.d:/etc/mysql/conf.d
       - ./etc/mariadb/my.cnf:/etc/mysql/my.cnf
     environment:
